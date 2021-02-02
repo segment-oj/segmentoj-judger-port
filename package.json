@@ -1,0 +1,33 @@
+{
+  "name": "segmentoj-judger-port",
+  "version": "0.1.0",
+  "description": "The SegmentOJ server aside helper for making WebSocket connections.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/segment-oj/segmentoj-judger-port.git"
+  },
+  "keywords": [
+    "server",
+    "websocket",
+    "helper"
+  ],
+  "author": "SegmentOJ",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/segment-oj/segmentoj-judger-port/issues"
+  },
+  "homepage": "https://github.com/segment-oj/segmentoj-judger-port#readme",
+  "dependencies": {
+    "config-lite": "^3.0.0",
+    "express": "^4.17.1",
+    "socket.io": "^3.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.11",
+    "@types/socket.io": "^2.1.13"
+  }
+}

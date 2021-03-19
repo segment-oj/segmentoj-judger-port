@@ -14,8 +14,10 @@ const verified_tokens = new Array();
 io.use((socket, next) => {
     const token = socket.handshake.auth.token;
     if (verified_tokens.includes(token)) {
+        console.log(`Token ${token} is OK.`);
         next();
     } else {
+        console.log(`Bad token ${token}. Rejected.`);
         next(new Error(JSON.stringify({
             code: 3002,
         })));
@@ -29,12 +31,14 @@ io.on('connection', socket => {
         priority: 0,
     });
 
+    console.log(`Client ${socket.id} joined.`);
+
     socket.on('set-priority', value => {
         clients[cid].priority = value;
     });
 
-    socket.on('disconnect', value => {
-        clients[cid].priority = value;
+    socket.on('disconnect', () => {
+        delete clients[cid];
     });
 });
 
@@ -77,6 +81,7 @@ app.post('/api/task', (req, res) => {
         sum += clients[i].priority;
         if (sum >= target) {
             clients[i].socket.emit('assign-task', data.task_id);
+            console.log(`Task assigned to ${clients[i].id}.`)
             break;
         }
     }
@@ -92,6 +97,7 @@ app.post('/api/token', (req, res) => {
     const data = req.body;
     if (typeof(data.token) == 'string') {
         verified_tokens.push(data.token);
+        console.log(`Made token ${data.token}`);
         res.json({
             code: 1000,
         }).end();
@@ -100,6 +106,20 @@ app.post('/api/token', (req, res) => {
 
     res.status(400).json({
         code: 4004,
+    }).end();
+});
+
+app.get('/api/status', (req, res) => {
+    res.json({
+        online: true,
+        connected_clients: clients.reduce((acc, x) => {
+            if (x) {
+                return acc + 1;
+            }
+            return acc;
+        }, 0),
+        verified_tokens: verified_tokens.length,
+        status_text: 'online',
     }).end();
 });
 

@@ -75,13 +75,17 @@ app.post('/api/task', (req, res) => {
         return;
     }
 
-    const target = clients.reduce((acc, cur) => acc + cur) * Math.random();
+    const target = clients.map(x => x.priority).reduce((acc, cur) => acc + cur, 0) * Math.random();
     let sum = 0;
-    for (let i of index_list) {
+    for (let i in clients) {
+    	if (!clients[i]) {
+    		continue;
+    	}
+
         sum += clients[i].priority;
         if (sum >= target) {
             clients[i].socket.emit('assign-task', data.task_id);
-            console.log(`Task assigned to ${clients[i].id}.`)
+            console.log(`Task assigned to ${clients[i].socket.id}.`)
             break;
         }
     }
